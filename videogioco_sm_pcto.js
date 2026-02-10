@@ -1,5 +1,16 @@
 let player;
+let player_s;
 let pista;
+
+let canzone
+let parti
+
+let playerX = 300;   // posizione orizzontale dello sciatore
+let playerSpeed = 8;
+
+let playerDir = "right";   // <<< AGGIUNTO
+
+let playerW = 120;        // <<< AGGIUNTO
 
 let schemaAttuale;
   //-2: start
@@ -42,6 +53,9 @@ function preload(){
     pause_image = loadImage('./img/pause.jpg');
     tutorial_image = loadImage('./img/tutorial.png');
     game_over = loadImage('./img/game_over.jpg');
+    canzone = loadSound('./img/lavoro.mp3');
+    player_s = loadImage('./img/sciatore_sx.png');
+    parti = false
 }
 
 function setup(){
@@ -66,7 +80,12 @@ function draw() {
     background(pause_image);
   } else if(schemaAttuale == 1){
     background(pista);
-    image(player, 300, 350)
+    updatePlayerFromPose();
+    if (playerDir === "left") {
+      image(player_s, playerX, 500, playerW, player_s.height * (playerW / player_s.width));
+    } else {
+      image(player, playerX, 500, playerW, player.height * (playerW / player.width));
+    }
   } else if(schemaAttuale == 2){
     background(game_over);
   }
@@ -86,7 +105,6 @@ function draw() {
       let pointBIndex = connections[j][1];
       let pointA = pose.keypoints[pointAIndex];
       let pointB = pose.keypoints[pointBIndex];
-      // Only draw a line if both points are confident enough
       if (pointA.confidence > 0.1 && pointB.confidence > 0.1) {
         stroke(255, 0, 0);
         strokeWeight(2);
@@ -104,7 +122,6 @@ function draw() {
     let pose = poses[i];
     for (let j = 0; j < pose.keypoints.length; j++) {
       let keypoint = pose.keypoints[j];
-      // Only draw a circle if the keypoint's confidence is bigger than 0.1
       if (keypoint.confidence > 0.1) {
         fill(0, 255, 0);
         noStroke();
@@ -116,9 +133,8 @@ function draw() {
   }
 }
 
-// Callback function for when bodyPose outputs data
 function gotPoses(results) {
-  poses = results;          // Save the output to the poses variable
+  poses = results;
 }
 
 function musica(){
@@ -130,6 +146,10 @@ function stopAllMusic(){
 }
 
 function mouseClicked() {
+  if (!parti && schemaAttuale == -2) {
+    canzone.play(); parti = true
+  }
+
   if(schemaAttuale == -2){
     if(mouseX >= x_sx && mouseX <= x_dx && mouseY >= y_so && mouseY <= y_st){
       schemaAttuale = -1;
@@ -149,4 +169,28 @@ function mouseClicked() {
 
 function keyPressed(){
 
+}
+
+function updatePlayerFromPose() {
+  if (poses.length === 0) return;
+
+  let pose = poses[0];
+  let nose = pose.keypoints.find(k => k.name === "nose");
+
+  if (!nose || nose.confidence < 0.2) return;
+
+  let noseX = nose.x;
+  let center = video.width / 2;
+  let deadZone = 40;
+
+  if (noseX < center - deadZone) {
+    playerX -= playerSpeed;
+    playerDir = "left";
+
+  } else if (noseX > center + deadZone) {
+    playerX += playerSpeed;
+    playerDir = "right";
+  }
+
+  playerX = constrain(playerX, 0, width - playerW);
 }
