@@ -1,5 +1,19 @@
+<<<<<<< HEAD
 @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600&family=Sora:wght@400;600;700;800&display=swap');
 
+=======
+/* =========================================================
+   NeuroMove Systems — style.css
+   Design: Refined medical-tech, clean & accessible
+   Fonts: Lexend (body) + Sora (headings)
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600&family=Sora:wght@400;600;700;800&display=swap');
+
+/* ---------------------------------------------------------
+   CSS Variables
+   --------------------------------------------------------- */
+>>>>>>> 20729791d2bca6c8ceff13bfdcc5fb98693be571
 :root {
   --navy:       #0E2340;
   --teal:       #0891B2;
@@ -20,6 +34,12 @@
   --max-width:  1100px;
 }
 
+<<<<<<< HEAD
+=======
+/* ---------------------------------------------------------
+   Reset & Base
+   --------------------------------------------------------- */
+>>>>>>> 20729791d2bca6c8ceff13bfdcc5fb98693be571
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -43,6 +63,12 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+<<<<<<< HEAD
+=======
+/* ---------------------------------------------------------
+   Header
+   --------------------------------------------------------- */
+>>>>>>> 20729791d2bca6c8ceff13bfdcc5fb98693be571
 header {
   background: linear-gradient(135deg, var(--navy) 0%, #1A4A7A 60%, #0D6B8A 100%);
   color: #FFFFFF;
@@ -52,6 +78,10 @@ header {
   overflow: hidden;
 }
 
+<<<<<<< HEAD
+=======
+/* Geometric neural-network background pattern */
+>>>>>>> 20729791d2bca6c8ceff13bfdcc5fb98693be571
 header::before {
   content: '';
   position: absolute;
@@ -63,6 +93,10 @@ header::before {
   pointer-events: none;
 }
 
+<<<<<<< HEAD
+=======
+/* Subtle dot-grid texture */
+>>>>>>> 20729791d2bca6c8ceff13bfdcc5fb98693be571
 header::after {
   content: '';
   position: absolute;
@@ -96,6 +130,12 @@ header p {
   z-index: 1;
 }
 
+<<<<<<< HEAD
+=======
+/* ---------------------------------------------------------
+   Navigation
+   --------------------------------------------------------- */
+>>>>>>> 20729791d2bca6c8ceff13bfdcc5fb98693be571
 nav {
   background: var(--surface);
   border-bottom: 1px solid var(--border);
@@ -147,6 +187,12 @@ nav a[aria-current="page"] {
   color: var(--teal);
 }
 
+<<<<<<< HEAD
+=======
+/* ---------------------------------------------------------
+   Main Content
+   --------------------------------------------------------- */
+>>>>>>> 20729791d2bca6c8ceff13bfdcc5fb98693be571
 main {
   flex: 1;
   max-width: var(--max-width);
@@ -155,6 +201,12 @@ main {
   padding: 3rem 2rem 4rem;
 }
 
+<<<<<<< HEAD
+=======
+/* ---------------------------------------------------------
+   Typography
+   --------------------------------------------------------- */
+>>>>>>> 20729791d2bca6c8ceff13bfdcc5fb98693be571
 h2 {
   font-family: 'Sora', sans-serif;
   font-size: clamp(1.6rem, 3vw, 2.2rem);
@@ -203,6 +255,12 @@ p {
   max-width: 70ch;
 }
 
+<<<<<<< HEAD
+=======
+/* ---------------------------------------------------------
+   Cards (wraps content sections)
+   --------------------------------------------------------- */
+>>>>>>> 20729791d2bca6c8ceff13bfdcc5fb98693be571
 main > p,
 main > h2,
 main > h3,
@@ -223,6 +281,10 @@ main > *:nth-child(6) { animation-delay: 0.3s;  }
   to   { opacity: 1; transform: translateY(0); }
 }
 
+<<<<<<< HEAD
+=======
+/* Section card blocks */
+>>>>>>> 20729791d2bca6c8ceff13bfdcc5fb98693be571
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -238,6 +300,12 @@ main > *:nth-child(6) { animation-delay: 0.3s;  }
   transform: translateY(-2px);
 }
 
+<<<<<<< HEAD
+=======
+/* ---------------------------------------------------------
+   Lists
+   --------------------------------------------------------- */
+>>>>>>> 20729791d2bca6c8ceff13bfdcc5fb98693be571
 ul {
   list-style: none;
   margin: 0.5rem 0 1.5rem;
@@ -272,6 +340,12 @@ li:hover {
   border-left-color: var(--teal-light);
 }
 
+<<<<<<< HEAD
+=======
+/* ---------------------------------------------------------
+   Links
+   --------------------------------------------------------- */
+>>>>>>> 20729791d2bca6c8ceff13bfdcc5fb98693be571
 a:not(nav a) {
   color: var(--teal);
   text-decoration: none;
@@ -285,6 +359,10 @@ a:not(nav a):hover {
   border-bottom-color: var(--teal);
 }
 
+<<<<<<< HEAD
+=======
+/* CTA link (as seen in index.html) */
+>>>>>>> 20729791d2bca6c8ceff13bfdcc5fb98693be571
 main > a {
   display: inline-flex;
   align-items: center;
@@ -312,6 +390,12 @@ main > a:hover {
   box-shadow: 0 8px 24px rgba(8, 145, 178, 0.45);
 }
 
+<<<<<<< HEAD
+=======
+/* ---------------------------------------------------------
+   Form (contatti.html)
+   --------------------------------------------------------- */
+>>>>>>> 20729791d2bca6c8ceff13bfdcc5fb98693be571
 form {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -389,10 +473,17 @@ button[type="submit"]:active {
   transform: translateY(0);
 }
 
+<<<<<<< HEAD
+=======
+/* ---------------------------------------------------------
+   Contact Info Block
+   --------------------------------------------------------- */
+>>>>>>> 20729791d2bca6c8ceff13bfdcc5fb98693be571
 main > p strong {
   color: var(--teal);
 }
 
+<<<<<<< HEAD
 footer {
   background: var(--navy);       /* sfondo scuro */
   color: #ffffff !important;      /* bianco leggibile */
@@ -412,6 +503,23 @@ footer p {
 }
 
 
+=======
+/* ---------------------------------------------------------
+   Footer
+   --------------------------------------------------------- */
+footer {
+  background: var(--navy);
+  color: rgba(255, 255, 255, 0.55);
+  text-align: center;
+  padding: 1.75rem 2rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.02em;
+}
+
+/* ---------------------------------------------------------
+   Responsive
+   --------------------------------------------------------- */
+>>>>>>> 20729791d2bca6c8ceff13bfdcc5fb98693be571
 @media (max-width: 768px) {
   nav {
     flex-wrap: wrap;
@@ -432,7 +540,11 @@ footer p {
   header {
     padding: 2.5rem 1.25rem 2rem;
   }
+<<<<<<< HEAD
   
+=======
+
+>>>>>>> 20729791d2bca6c8ceff13bfdcc5fb98693be571
   form {
     padding: 1.5rem;
   }
@@ -443,4 +555,8 @@ footer p {
     font-size: 0.75rem;
     padding: 0.85rem 0.5rem;
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 20729791d2bca6c8ceff13bfdcc5fb98693be571
