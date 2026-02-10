@@ -2,6 +2,11 @@ let player;
 let pista;
 
 let schemaAttuale;
+  //-2: start
+  //-1: tutorial
+  //0: pausa
+  //1: gioco
+  //2: gameOver
 let oldSchema;
 
 let start_image;
@@ -17,13 +22,11 @@ let connections;
 function preload(){
     bodyPose = ml5.bodyPose();    // Load the bodyPose model
     //player = loadImage();
-    //pista = loadImage();
-    //schemaAttuale = loadImage();
-    //oldSchema = loadImage();
-    start_image = loadImage('./img/image (2).jpg');
-    //pause_image = loadImage();
-    //tutorial_image = loadImage();
-    //game_over = loadImage();
+    pista = loadImage(pista_sci.png);
+    start_image = loadImage('./img/start_image.png');
+    pause_image = loadImage('./img/pause.jpg');
+    tutorial_image = loadImage('./img/tutorial.png');
+    game_over = loadImage('./img/game_over.jpg');
 }
 
 function setup(){
@@ -44,7 +47,7 @@ function draw() {
 
   let camW = 250;
   let camH = 200;
-  let offX = width - camW;
+  let offX = width - camW - 10;
   let offY = height - camH - 10;
 
   image(video, offX, offY, camW, camH);
@@ -101,7 +104,12 @@ function stopAllMusic(){
 }
 
 function mouseClicked() {
-
+  if(schemaAttuale == -2){
+    if(mouseX > x_sx && mouseX < x_dx && mouseY > y_so && mouseY < y_st){
+      schemaAttuale = -1;
+      image(tutorial_image, 0, 0);
+    }
+  }
 }
 
 function keyPressed(){
