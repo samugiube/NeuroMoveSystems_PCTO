@@ -14,6 +14,21 @@ let pause_image;
 let tutorial_image;
 let game_over;
 
+let x_sx = 431;
+let x_dx = 1048;
+let y_so = 226;
+let y_st = 429;
+
+let x_sx_pausa_riprendi = 483;
+let x_dx_pausa_riprendi = 941;
+let y_so_pausa_riprendi = 282;
+let y_st_pausa_riprendi = 356;
+
+let x_sx_pausa_esci = 483;
+let x_dx_pausa_esci = 941;
+let y_so_pausa_esci = 378;
+let y_st_pausa_esci = 453;
+
 let video;
 let bodyPose;
 let poses = [];
@@ -21,8 +36,8 @@ let connections;
 
 function preload(){
     bodyPose = ml5.bodyPose();    // Load the bodyPose model
-    //player = loadImage();
-    pista = loadImage(pista_sci.png);
+    player = loadImage('./img/sciatore.png');
+    pista = loadImage('./img/pista_sci.png');
     start_image = loadImage('./img/start_image.png');
     pause_image = loadImage('./img/pause.jpg');
     tutorial_image = loadImage('./img/tutorial.png');
@@ -43,7 +58,18 @@ function setup(){
 }
 
 function draw() {
-  image(start_image, 0, 0);
+  if(schemaAttuale == -2)
+    image(start_image, 0, 0);
+  else if (schemaAttuale == -1){
+    background(tutorial_image);
+  } else if(schemaAttuale == 0){
+    background(pause_image);
+  } else if(schemaAttuale == 1){
+    background(pista);
+    image(player, 300, 350)
+  } else if(schemaAttuale == 2){
+    background(game_over);
+  }
 
   let camW = 250;
   let camH = 200;
@@ -105,11 +131,20 @@ function stopAllMusic(){
 
 function mouseClicked() {
   if(schemaAttuale == -2){
-    if(mouseX > x_sx && mouseX < x_dx && mouseY > y_so && mouseY < y_st){
+    if(mouseX >= x_sx && mouseX <= x_dx && mouseY >= y_so && mouseY <= y_st){
       schemaAttuale = -1;
-      image(tutorial_image, 0, 0);
+      setTimeout(() => {
+        schemaAttuale = 1;
+      }, 7000);
     }
-  }
+  } else if(schemaAttuale == 2){
+      if(mouseX > x_sx_pausa_riprendi && mouseX < x_dx_pausa_riprendi && mouseY > y_so_pausa_riprendi && mouseY < y_st_pausa_riprendi){
+        schemaAttuale = 1;
+      }
+      if(mouseX > x_sx_pausa_esci && mouseX < x_dx_pausa_esci && mouseY > y_so_pausa_esci && mouseY < y_st_pausa_esci){
+        schemaAttuale = -2;
+      }
+    }
 }
 
 function keyPressed(){
