@@ -1,16 +1,32 @@
 let player;
 let player_s;
 let pista;
+let bandierina;
+let bandierine = [];
+let maxBandierine = 5;
+let bandierinaW = 70;
+let safeOffsetX = 400;        // distanza minima orizzontale (PIÙ GRANDE)
+let safeOffsetY = 250;        // distanza minima verticale
+let cuore;
+let coppa;
 
-let canzone
-let parti
+let viteMax = 5;
+let vite = 5;
 
-let playerX = 300;   // posizione orizzontale dello sciatore
+let lastLifeLossFrame = 0;
+let lifeLossCooldown = 20; // ~0.4 secondi
+
+let pistaOffsetY = 0;
+let pistaSpeed = 6;         // velocità scorrimento pista
+
+let canzone;
+let parti;
+
+let playerX = 300;            // posizione orizzontale dello sciatore
 let playerSpeed = 8;
 
-let playerDir = "right";   // <<< AGGIUNTO
-
-let playerW = 120;        // <<< AGGIUNTO
+let playerDir = "right";
+let playerW = 120;
 
 let schemaAttuale;
   //-2: start
@@ -45,28 +61,35 @@ let bodyPose;
 let poses = [];
 let connections;
 
+// NUOVO: contatore aggiornamenti pista per vittoria
+let aggiornamentiPista = 0;
+let vittoriaMostrata = false;
+
 function preload(){
     bodyPose = ml5.bodyPose();    // Load the bodyPose model
     player = loadImage('./img/sciatore.png');
-    pista = loadImage('./img/pista_sci.png');
+    pista = loadImage('./img/prova.png');
     start_image = loadImage('./img/start_image.png');
     pause_image = loadImage('./img/pause.jpg');
     tutorial_image = loadImage('./img/tutorial.png');
     game_over = loadImage('./img/game_over.jpg');
     canzone = loadSound('./img/lavoro.mp3');
     player_s = loadImage('./img/sciatore_sx.png');
-    parti = false
+    parti = false;
+    bandierina = loadImage('./img/bandierina.png');
+    cuore = loadImage('./img/cuore.png');
+    coppa = loadImage('./img/coppa.jpeg');
 }
 
 function setup(){
     createCanvas(start_image.width, start_image.height);
     frameRate(50);
+    player = new Player(player, playerX, 500);
     video = createCapture(VIDEO);
     video.size(640, 480);
     video.hide();
     bodyPose.detectStart(video, gotPoses);  // Start detecting poses in the webcam video
     connections = bodyPose.getSkeleton();   // Get the skeleton connection information
-
     schemaAttuale = -2;
     oldSchema = schemaAttuale;
 }
@@ -80,12 +103,23 @@ function draw() {
     background(pause_image);
   } else if(schemaAttuale == 1){
     background(pista);
+    drawScrollingPista();
     updatePlayerFromPose();
+    updateAndDrawBandierine();
+    drawVite();
+    checkDribbling();
+
     if (playerDir === "left") {
       image(player_s, playerX, 500, playerW, player_s.height * (playerW / player_s.width));
     } else {
       image(player, playerX, 500, playerW, player.height * (playerW / player.width));
     }
+
+    // NUOVO: mostra coppa se vittoria raggiunta
+    if (vittoriaMostrata) {
+      mostraVittoria();
+    }
+
   } else if(schemaAttuale == 2){
     background(game_over);
   }
@@ -94,7 +128,6 @@ function draw() {
   let camH = 200;
   let offX = width - camW - 10;
   let offY = height - camH - 10;
-
   image(video, offX, offY, camW, camH);
 
   // Draw the skeleton connections
@@ -137,13 +170,9 @@ function gotPoses(results) {
   poses = results;
 }
 
-function musica(){
+function musica(){}
 
-}
-
-function stopAllMusic(){
-
-}
+function stopAllMusic(){}
 
 function mouseClicked() {
   if (!parti && schemaAttuale == -2) {
@@ -168,29 +197,149 @@ function mouseClicked() {
 }
 
 function keyPressed(){
-
+  if (key == 'p' || key == "Escape") {
+    if (schemaAttuale != 0) {
+      oldSchema = schemaAttuale;
+      schemaAttuale = 0;
+    } else {
+      schemaAttuale = oldSchema;
+    }
+  }
 }
 
 function updatePlayerFromPose() {
   if (poses.length === 0) return;
-
   let pose = poses[0];
   let nose = pose.keypoints.find(k => k.name === "nose");
-
   if (!nose || nose.confidence < 0.2) return;
-
   let noseX = nose.x;
   let center = video.width / 2;
   let deadZone = 40;
-
   if (noseX < center - deadZone) {
     playerX -= playerSpeed;
     playerDir = "left";
-
   } else if (noseX > center + deadZone) {
     playerX += playerSpeed;
     playerDir = "right";
   }
-
   playerX = constrain(playerX, 0, width - playerW);
+}
+
+// --- FUNZIONE MODIFICATA PER VITTORIA ---
+function drawScrollingPista() {
+  pistaOffsetY += pistaSpeed;
+  if (pistaOffsetY >= height) {
+    pistaOffsetY = 0;
+  }
+  image(pista, 0, pistaOffsetY - height, width, height);    
+  image(pista, 0, pistaOffsetY, width, height);
+
+  // incremento contatore aggiornamenti
+  aggiornamentiPista++;
+
+  if (aggiornamentiPista >= 5000 && !vittoriaMostrata) {
+    vittoriaMostrata = true;
+  }
+}
+
+function spawnBandierina() {
+  let pistaMinX = 200;
+  let pistaMaxX = 1100 - bandierinaW;
+  let tries = 0;
+  let maxTries = 30;
+  let x, y;
+  let valid = false;
+  while (!valid && tries < maxTries) {
+    x = random(pistaMinX, pistaMaxX);
+    y = random(-600, -100);
+    valid = true;
+    for (let b of bandierine) {
+      let dx = abs(x - b.x);
+      let dy = abs(y - b.y);
+      if (dx < safeOffsetX) {
+        valid = false;
+        break;
+      }
+      if (dy < safeOffsetY) {
+        valid = false;
+        break;
+      }
+    }
+    tries++;
+  }
+
+  if (valid) {
+    bandierine.push({
+      x: x,
+      y: y,
+      checked: false
+    });
+  }
+}
+
+function updateAndDrawBandierine() {
+  for (let i = bandierine.length - 1; i >= 0; i--) {
+    let b = bandierine[i];
+    b.y += pistaSpeed;
+    image(bandierina, b.x, b.y, bandierinaW, 90);
+    if (b.y > height + 50) {
+      bandierine.splice(i, 1);
+    }
+  }
+  if (bandierine.length < maxBandierine && frameCount % 40 === 0) {
+    spawnBandierina();
+  }
+}
+
+function drawVite() {
+  for (let i = 0; i < vite; i++) {
+    let x = width - 10 - (i + 1) * (cuore.width + 5);
+    let y = 10;
+    image(cuore, x, y, cuore.width, cuore.width);
+  }
+}
+
+// --- FUNZIONE MODIFICATA PER COLLISIONE INTERNA ---
+function checkDribbling() {
+  for (let i = bandierine.length - 1; i >= 0; i--) {
+    let b = bandierine[i];
+    if (!b.checked && b.y > 500) {
+      b.checked = true;
+
+      let skierLeft = playerX;
+      let skierRight = playerX + playerW;
+      let bandLeft = b.x;
+      let bandRight = b.x + bandierinaW;
+
+      // collisione rettangolare, qualsiasi contatto
+      let collisione = !(skierRight < bandLeft || skierLeft > bandRight);
+
+      if (collisione) {
+        loseLife();
+      }
+    }
+  }
+}
+
+function loseLife() {
+  if (frameCount - lastLifeLossFrame < lifeLossCooldown) return;
+  lastLifeLossFrame = frameCount;
+  vite--;
+  if (vite <= 0) {
+    vite = 0;
+    schemaAttuale = 2;
+  }
+}
+
+function mostraVittoria() {
+  let coppaW = 300;
+  let coppaH = coppa.height * (coppaW / coppa.width);
+  image(coppa, width / 2 - coppaW / 2, height / 2 - coppaH / 2 - 50, coppaW, coppaH);
+
+  textAlign(CENTER, CENTER);
+  textSize(64);
+  fill(255, 215, 0);
+  stroke(0);
+  strokeWeight(4);
+  text("HAI VINTO!", width / 2, height / 2 + coppaH / 2);
 }
