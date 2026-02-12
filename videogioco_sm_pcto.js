@@ -335,17 +335,15 @@ function checkDribbling() {
       let staAndandoASinistra = skierSpeedX < 0;
       let staAndandoADestra = skierSpeedX > 0;
       let passedWrongSide = false;
-      // Caso 1: va a sinistra → DEVE stare a destra della bandierina
+      // Caso 1: va a sinistra → DEVE stare a sinistra della bandierina
       if (staAndandoASinistra) {
         if (skierCenter > bandCenter) {
-          // è passato a sinistra = SBAGLIATO
           passedWrongSide = true;
         }
       }
-      // Caso 2: va a destra → DEVE stare a sinistra della bandierina
+      // Caso 2: va a destra → DEVE stare a destra della bandierina
       if (staAndandoADestra) {
         if (skierCenter < bandCenter) {
-          // è passato a destra = SBAGLIATO
           passedWrongSide = true;
         }
       }
