@@ -110,6 +110,7 @@ function mouseClicked() {
     } else if (schema == SCHEMI.gameover) {
         schema = SCHEMI.home
         vite = viteMax
+        punteggio = 0;
         bandierine.splice(0, 5)
         player.x = xInizio
     } else if (schema == SCHEMI.pausa) {
