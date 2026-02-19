@@ -1,6 +1,7 @@
-let microBit
-let ultimoSchema;
-let schema; 
+let microBit;
+let punteggio;
+
+let schema; let ultimoSchema
 const SCHEMI = Object.freeze({
     accoppia: -2,
     tutorial: -1,
@@ -10,36 +11,24 @@ const SCHEMI = Object.freeze({
     pausa: 3,
 })
 
-let playerImgSx; 
-let playerImgDx;
-let playerWidth; 
-let playerHeight;
-let xInizio; 
-let yInizio;
-let vite = 5; 
-let viteMax = 5; 
-let cuoreImg;
+let playerImgSx; let playerImgDx
+let playerWidth; let playerHeight
+let xInizio; let yInizio
+let vite = 5; let viteMax = 5; let cuoreImg
 
-let pistaImg; 
-let pistaOffsetY = 0; 
-let pistaSpeed = 6
+let pistaImg; let pistaOffsetY = 0; let pistaSpeed = 6
 
-let bandImg; 
-let bandWidth = 70; 
-let bandHeight = 90;
-const bandierine = []; 
-let maxBand = 5
+let bandImg; let bandWidth = 360; let bandHeight = 90
+const bandierine = []; let maxBand = 5
 
-let startImg; 
-let pausaImg; 
-let gameOverImg; 
-let tutorialImg;
+let startImg; let pausaImg; let gameOverImg; let tutorialImg
+
+let tutPrimoFrame
 
 function preload() {
     playerImgDx = loadImage("./img/sciatore.png")
     playerImgSx = loadImage("./img/sciatore_sx.png")
-    playerWidth = 120; 
-    playerHeight = playerImgDx.height * (playerWidth / playerImgDx.width)
+    playerWidth = 120; playerHeight = playerImgDx.height * (playerWidth / playerImgDx.width)
     cuoreImg = loadImage("./img/cuore.png")
 
     pistaImg = loadImage("./img/prova.png")
@@ -49,6 +38,7 @@ function preload() {
     pausaImg = loadImage("./img/pause.jpg")
     gameOverImg = loadImage("./img/game_over.jpg")
     tutorialImg = loadImage("./img/tutorial.png")
+
 }
 
 function setup() {
@@ -57,6 +47,9 @@ function setup() {
     background(startImg)
     schema = SCHEMI.accoppia
     
+    punteggio = 0;
+    textSize (32);
+    textAlign(LEFT);
     xInizio = startImg.width/2 - playerImgDx.width/2
     yInizio = startImg.height - playerImgDx.height/2
     player = new Player(playerImgDx, playerImgSx, xInizio, yInizio)
@@ -65,10 +58,20 @@ function setup() {
 }
 
 function draw() {
-    if (schema == SCHEMI.home)
+    if (schema == SCHEMI.accoppia) {
+    
+    } else if (schema == SCHEMI.tutorial) {
+        background(tutorialImg)
+
+        if (frameCount >= tutPrimoFrame + 250) {
+            schema = SCHEMI.gioco
+        }
+
+    } else if (schema == SCHEMI.home) {
         background(startImg)
-    else if (schema == SCHEMI.gioco) {
-        background(pistaImg)
+    } else if (schema == SCHEMI.gioco) {
+        text(punteggio, 12, 40);
+        background(pistaImg);
         pistaScorre()
         disegnaBandiere()
         disegnaVite()
@@ -77,24 +80,23 @@ function draw() {
         image(player.imgShow, player.x, player.y, playerWidth, playerHeight)
 
         let forzaX = microBit.getAccelerometer().x
-        if (forzaX > 450) 
-            player.muoviSx()
-        else if (forzaX < -450) 
-            player.muoviDx(startImg)
-    } else if (schema == SCHEMI.gameover)
+        if (forzaX > 450) player.muoviSx()
+        else if (forzaX < -450) player.muoviDx(startImg)
+
+    } else if (schema == SCHEMI.gameover) {
         background(gameOverImg)
-    else if (schema == SCHEMI.pausa)
+    } else if (schema == SCHEMI.pausa) {
         background(pausaImg)
+    }
 }
 
 function keyPressed() {
-    if (schema == SCHEMI.home)
-        schema = SCHEMI.gioco
     if (keyCode == ESCAPE) {
         if (schema == SCHEMI.gioco) {
             schema = SCHEMI.pausa
-        } else if (schema == SCHEMI.pausa)
+        } else if (schema == SCHEMI.pausa) {
             schema = SCHEMI.gioco
+        }
     }
 }
 
@@ -102,45 +104,45 @@ function mouseClicked() {
     if (schema == SCHEMI.accoppia) {
         microBit.searchDevice()
         schema = SCHEMI.home
-    } else if (schema == SCHEMI.home)
-        schema = SCHEMI.gioco
-    else if (schema == SCHEMI.gameover) {
+    } else if (schema == SCHEMI.home) {
+        schema = SCHEMI.tutorial
+        tutPrimoFrame = frameCount
+    } else if (schema == SCHEMI.gameover) {
         schema = SCHEMI.home
         vite = viteMax
         bandierine.splice(0, 5)
         player.x = xInizio
-    } else if (schema == SCHEMI.pausa)
+    } else if (schema == SCHEMI.pausa) {
         schema = SCHEMI.gioco
+    }
 }
+
+
 
 function pistaScorre() {
     pistaOffsetY += pistaSpeed;
-    if (pistaOffsetY >= height) 
-        pistaOffsetY = 0;
+    if (pistaOffsetY >= height) pistaOffsetY = 0;
     image(pistaImg, 0, pistaOffsetY - height, width, height);    
     image(pistaImg, 0, pistaOffsetY, width, height);
 }
 
 function spawnaBandiera() {
-    let minPistaX = 200; 
-    let maxPistaX = 1100 - bandWidth
-    let minPistaY = -600; 
-    let maxPistaY = -100
+    let minPistaX = 200; let maxPistaX = 1100 - bandWidth
+    let minPistaY = -600; let maxPistaY = -100
 
-    let prove = 0;
-    let proveMax = 30;
-    let x;
-    let y;
-    let valido = false;
+    let x = random(minPistaX, maxPistaX)
 
-    while (!valido && prove < proveMax) {
-        x = random(minPistaX, maxPistaX);
-        y = random(minPistaY, maxPistaY);
-        valido = true;
-        prove++;
+    if (bandierine.length == 1) {
+        while (Math.abs(x - bandierine[0].x) < 250) { x = random(minPistaX, maxPistaX) }
+    } else if (bandierine.length == 2) {
+        while (Math.abs(x - bandierine[1].x) < 250) { x = random(minPistaX, maxPistaX) }
     }
-    if (valido) 
-        bandierine.push(new Bandiera(x, y));
+
+    let y = random(minPistaY, maxPistaY)
+
+    console.log(x, y)
+    
+    bandierine.push(new Bandiera(x, y));
 }
 
 function disegnaBandiere() {
@@ -150,11 +152,9 @@ function disegnaBandiere() {
         b.y += pistaSpeed
         image(bandImg, b.x, b.y, bandWidth, bandHeight)
 
-        if (b.y > height + 50)
-            bandierine.splice(k, 1)
+        if (b.y > height + 50) { bandierine.splice(k, 1) }
     }
-    if (bandierine.length < maxBand && frameCount % 40 == 0) 
-        spawnaBandiera()
+    if (bandierine.length < maxBand && frameCount % 50 == 0) spawnaBandiera()
 }
 
 function disegnaVite() {
@@ -168,21 +168,20 @@ function disegnaVite() {
 function controllaDribbling() {
     for (let k = bandierine.length - 1; k >= 0; k--) {
         let b = bandierine[k];
-        if (!b.check && b.y > player.y - bandImg.height) {
+        if (!b.check && b.y > player.y) {
             b.check = true;
-            let centroSci = player.x + playerWidth / 2;
-            let centroBand = b.x + bandWidth / 2;
-            let latoSbagliato = false;
+            punteggio++;
+            let passato = true
 
-            if (player.imgShow == player.imgSx && centroSci > centroBand) 
-                latoSbagliato = true;
-            if (player.imgShow == player.imgDx && centroSci < centroBand) 
-                latoSbagliato = true;
+            if (player.x < b.x || player.x + playerWidth > b.x + bandWidth) passato = false
 
-            if (latoSbagliato) {
+            if (!passato) { // perdi una vita
                 vite--
-                if (vite <= 0) 
-                    schema = SCHEMI.gameover
+                if (vite <= 0){
+                    schema = SCHEMI.gameover  
+                    punteggio--;
+                } 
+                
             }
         }
     }
