@@ -1,6 +1,6 @@
 let microBit
-
-let schema; let ultimoSchema
+let ultimoSchema;
+let schema; 
 const SCHEMI = Object.freeze({
     accoppia: -2,
     tutorial: -1,
@@ -10,17 +10,30 @@ const SCHEMI = Object.freeze({
     pausa: 3,
 })
 
-let playerImgSx; let playerImgDx
-let playerWidth; let playerHeight
-let xInizio; let yInizio
-let vite = 5; let viteMax = 5; let cuoreImg
+let playerImgSx; 
+let playerImgDx;
+let playerWidth; 
+let playerHeight;
+let xInizio; 
+let yInizio;
+let vite = 5; 
+let viteMax = 5; 
+let cuoreImg;
 
-let pistaImg; let pistaOffsetY = 0; let pistaSpeed = 6
+let pistaImg; 
+let pistaOffsetY = 0; 
+let pistaSpeed = 6
 
-let bandImg; let bandWidth = 70; let bandHeight = 90
-const bandierine = []; let maxBand = 5
+let bandImg; 
+let bandWidth = 70; 
+let bandHeight = 90;
+const bandierine = []; 
+let maxBand = 5
 
-let startImg; let pausaImg; let gameOverImg; let tutorialImg
+let startImg; 
+let pausaImg; 
+let gameOverImg; 
+let tutorialImg;
 
 function preload() {
     playerImgDx = loadImage("./img/sciatore.png")
@@ -36,7 +49,6 @@ function preload() {
     pausaImg = loadImage("./img/pause.jpg")
     gameOverImg = loadImage("./img/game_over.jpg")
     tutorialImg = loadImage("./img/tutorial.png")
-
 }
 
 function setup() {
@@ -50,15 +62,12 @@ function setup() {
     player = new Player(playerImgDx, playerImgSx, xInizio, yInizio)
 
     microBit = new uBitWebBluetooth();
-
 }
 
 function draw() {
-    if (schema == SCHEMI.accoppia) {
-
-    } else if (schema == SCHEMI.home) {
+    if (schema == SCHEMI.home)
         background(startImg)
-    } else if (schema == SCHEMI.gioco) {
+    else if (schema == SCHEMI.gioco) {
         background(pistaImg)
         pistaScorre()
         disegnaBandiere()
@@ -68,26 +77,24 @@ function draw() {
         image(player.imgShow, player.x, player.y, playerWidth, playerHeight)
 
         let forzaX = microBit.getAccelerometer().x
-        if (forzaX > 450) player.muoviSx()
-        else if (forzaX < -450) player.muoviDx(startImg)
-
-    } else if (schema == SCHEMI.gameover) {
+        if (forzaX > 450) 
+            player.muoviSx()
+        else if (forzaX < -450) 
+            player.muoviDx(startImg)
+    } else if (schema == SCHEMI.gameover)
         background(gameOverImg)
-    } else if (schema == SCHEMI.pausa) {
+    else if (schema == SCHEMI.pausa)
         background(pausaImg)
-    }
 }
 
 function keyPressed() {
-    if (schema == SCHEMI.home) {
+    if (schema == SCHEMI.home)
         schema = SCHEMI.gioco
-    }
     if (keyCode == ESCAPE) {
         if (schema == SCHEMI.gioco) {
             schema = SCHEMI.pausa
-        } else if (schema == SCHEMI.pausa) {
+        } else if (schema == SCHEMI.pausa)
             schema = SCHEMI.gioco
-        }
     }
 }
 
@@ -95,40 +102,45 @@ function mouseClicked() {
     if (schema == SCHEMI.accoppia) {
         microBit.searchDevice()
         schema = SCHEMI.home
-    } else if (schema == SCHEMI.home) {
+    } else if (schema == SCHEMI.home)
         schema = SCHEMI.gioco
-    } else if (schema == SCHEMI.gameover) {
+    else if (schema == SCHEMI.gameover) {
         schema = SCHEMI.home
         vite = viteMax
         bandierine.splice(0, 5)
         player.x = xInizio
-    } else if (schema == SCHEMI.pausa) {
+    } else if (schema == SCHEMI.pausa)
         schema = SCHEMI.gioco
-    }
 }
 
 function pistaScorre() {
     pistaOffsetY += pistaSpeed;
-    if (pistaOffsetY >= height) pistaOffsetY = 0;
+    if (pistaOffsetY >= height) 
+        pistaOffsetY = 0;
     image(pistaImg, 0, pistaOffsetY - height, width, height);    
     image(pistaImg, 0, pistaOffsetY, width, height);
 }
 
 function spawnaBandiera() {
-    let minPistaX = 200; let maxPistaX = 1100 - bandWidth
-    let minPistaY = -600; let maxPistaY = -100
+    let minPistaX = 200; 
+    let maxPistaX = 1100 - bandWidth
+    let minPistaY = -600; 
+    let maxPistaY = -100
 
     let prove = 0;
     let proveMax = 30;
-    let x, y;
+    let x;
+    let y;
     let valido = false;
+
     while (!valido && prove < proveMax) {
         x = random(minPistaX, maxPistaX);
         y = random(minPistaY, maxPistaY);
         valido = true;
         prove++;
     }
-    if (valido) bandierine.push(new Bandiera(x, y));
+    if (valido) 
+        bandierine.push(new Bandiera(x, y));
 }
 
 function disegnaBandiere() {
@@ -138,9 +150,11 @@ function disegnaBandiere() {
         b.y += pistaSpeed
         image(bandImg, b.x, b.y, bandWidth, bandHeight)
 
-        if (b.y > height + 50) { bandierine.splice(k, 1) }
+        if (b.y > height + 50)
+            bandierine.splice(k, 1)
     }
-    if (bandierine.length < maxBand && frameCount % 40 == 0) spawnaBandiera()
+    if (bandierine.length < maxBand && frameCount % 40 == 0) 
+        spawnaBandiera()
 }
 
 function disegnaVite() {
@@ -160,12 +174,15 @@ function controllaDribbling() {
             let centroBand = b.x + bandWidth / 2;
             let latoSbagliato = false;
 
-            if (player.imgShow == player.imgSx && centroSci > centroBand) latoSbagliato = true;
-            if (player.imgShow == player.imgDx && centroSci < centroBand) latoSbagliato = true;
+            if (player.imgShow == player.imgSx && centroSci > centroBand) 
+                latoSbagliato = true;
+            if (player.imgShow == player.imgDx && centroSci < centroBand) 
+                latoSbagliato = true;
 
-            if (latoSbagliato) { // perdi una vita
+            if (latoSbagliato) {
                 vite--
-                if (vite <= 0) schema = SCHEMI.gameover
+                if (vite <= 0) 
+                    schema = SCHEMI.gameover
             }
         }
     }
