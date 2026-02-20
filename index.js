@@ -44,6 +44,8 @@ let sceltaImg
 
 let tutPrimoFrame
 
+let musica
+
 function preload() {
     playerImgDx = loadImage("./img/sciatore.png")
     playerImgSx = loadImage("./img/sciatore_sx.png")
@@ -59,6 +61,8 @@ function preload() {
     gameOverImg = loadImage("./img/game_over.jpg")
     tutorialImg = loadImage("./img/tutorial.png")
     sceltaImg = loadImage("./img/scelta_og.png")
+
+    musica = loadSound("./img/lavoro.mp3")
 
     punteggio = 0
     puntVittoria = 10
@@ -127,6 +131,7 @@ function mouseClicked() {
     if (schema == SCHEMI.accoppia) {
         microBit.searchDevice()
         schema = SCHEMI.home
+        musica.loop()
     } else if (schema == SCHEMI.home) {
         if (mouseX >= 460 && mouseX <= 1010 && mouseY >= 225 && mouseY <= 430)
             schema = SCHEMI.scelta
